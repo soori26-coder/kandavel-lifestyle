@@ -22,7 +22,7 @@ git init
 git add .
 git commit -m "Initial Kandavel Lifestyle website"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/kandavel-lifestyle.git
+git remote add origin https://github.com/soori26-coder/kandavel-lifestyle.git
 git push -u origin main
 ```
 
@@ -54,7 +54,7 @@ Log in to [Dynadot](https://www.dynadot.com/) → **My Domains** → `kandavel.l
 
 | Type | Host | Value |
 |------|------|-------|
-| CNAME | www | YOUR_USERNAME.github.io |
+| CNAME | www | soori26-coder.github.io |
 
 DNS propagation takes 5 minutes to 48 hours.
 
