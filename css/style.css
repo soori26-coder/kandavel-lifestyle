@@ -688,6 +688,62 @@ a:hover {
   resize: vertical;
 }
 
+.form-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-note {
+  font-size: 0.8rem;
+  color: var(--stone-muted);
+  margin-top: 0.75rem;
+}
+
+.form-status {
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.form-status--success {
+  background: rgba(45, 90, 61, 0.1);
+  border: 1px solid rgba(45, 90, 61, 0.25);
+  color: var(--brand-green);
+}
+
+.form-status--error {
+  background: rgba(180, 60, 50, 0.08);
+  border: 1px solid rgba(180, 60, 50, 0.25);
+  color: #8b3a32;
+}
+
+.form-field-error {
+  display: block;
+  font-size: 0.8rem;
+  color: #8b3a32;
+  margin-top: 0.35rem;
+  min-height: 0;
+}
+
+.form-field-error:empty {
+  display: none;
+}
+
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+  border-color: #8b3a32;
+}
+
+.contact-form-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Privacy policy */
 .policy-content {
   max-width: 760px;

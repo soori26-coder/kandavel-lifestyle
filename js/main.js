@@ -16,18 +16,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const form = document.querySelector('.contact-form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const name = data.get('name');
-      const email = data.get('email');
-      const company = data.get('company') || '';
-      const message = data.get('message');
-      const subject = encodeURIComponent(`Inquiry from ${name}${company ? ' — ' + company : ''}`);
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company}\n\n${message}`);
-      window.location.href = `mailto:suresh.d@kandavel.lifestyle?subject=${subject}&body=${body}`;
-    });
-  }
+  const form = document.querySelector('#contact-form');
+  if (!form || typeof window.formspree !== 'function') return;
+
+  const fields = form.querySelector('.contact-form-fields');
+  const submitBtn = form.querySelector('.contact-form-submit');
+  const btnLabel = submitBtn?.querySelector('.btn-label');
+  const btnLoading = submitBtn?.querySelector('.btn-loading');
+  const errorMessage = form.querySelector('.form-status-message');
+  const formId = window.KANDAVEL_CONFIG?.formspreeFormId;
+
+  if (!formId) return;
+
+  const inquirySubject = () => {
+    const name = form.querySelector('[name="name"]')?.value.trim() || '';
+    const company = form.querySelector('[name="company"]')?.value.trim() || '';
+    return `Inquiry from ${name}${company ? ` — ${company}` : ''}`;
+  };
+
+  window.formspree('initForm', {
+    formElement: '#contact-form',
+    formId,
+
+    data: {
+      _subject: inquirySubject,
+      _replyto: () => form.querySelector('[name="email"]')?.value.trim() || '',
+    },
+
+    disable: () => {
+      if (!submitBtn) return;
+      submitBtn.disabled = true;
+      if (btnLabel) btnLabel.hidden = true;
+      if (btnLoading) btnLoading.hidden = false;
+    },
+
+    enable: () => {
+      if (!submitBtn) return;
+      submitBtn.disabled = false;
+      if (btnLabel) btnLabel.hidden = false;
+      if (btnLoading) btnLoading.hidden = true;
+    },
+
+    onSuccess: () => {
+      if (fields) fields.hidden = true;
+    },
+
+    renderFormError: (_context, message) => {
+      if (errorMessage) {
+        errorMessage.textContent = message || 'Please try again or email us directly at suresh.d@kandavel.lifestyle.';
+      }
+    },
+  });
 });

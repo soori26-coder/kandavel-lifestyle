@@ -83,26 +83,44 @@
             </div>
           </div>
 
-          <form class="contact-form" action="#" method="post">
+          <form class="contact-form" id="contact-form" novalidate>
             <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--brand-green); margin-bottom: 1.25rem;">Send an Inquiry</h3>
-            <div class="form-group">
-              <label for="name">Full Name *</label>
-              <input type="text" id="name" name="name" required placeholder="Your name">
+
+            <div class="form-status form-status--success" data-fs-success role="status" aria-live="polite" hidden>
+              <p><strong>Thank you!</strong> Your inquiry has been sent. Our team will respond within 1–2 business days.</p>
             </div>
-            <div class="form-group">
-              <label for="email">Email Address *</label>
-              <input type="email" id="email" name="email" required placeholder="you@company.com">
+            <div class="form-status form-status--error" data-fs-error role="alert" aria-live="assertive" hidden>
+              <p><strong>Something went wrong.</strong> <span class="form-status-message">Please try again or email us directly at suresh.d@kandavel.lifestyle.</span></p>
             </div>
-            <div class="form-group">
-              <label for="company">Company</label>
-              <input type="text" id="company" name="company" placeholder="Your company name">
+
+            <div class="contact-form-fields">
+              <input type="text" name="_gotcha" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+              <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" data-fs-field required placeholder="Your name" autocomplete="name">
+                <span class="form-field-error" data-fs-error="name"></span>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" data-fs-field required placeholder="you@company.com" autocomplete="email">
+                <span class="form-field-error" data-fs-error="email"></span>
+              </div>
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" name="company" data-fs-field placeholder="Your company name" autocomplete="organization">
+              </div>
+              <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" name="message" data-fs-field required placeholder="Tell us about your requirements — product type, quantity, timeline..."></textarea>
+                <span class="form-field-error" data-fs-error="message"></span>
+              </div>
+              <button type="submit" class="btn btn-primary contact-form-submit" data-fs-submit-btn style="width: 100%;">
+                <span class="btn-label">Send Message</span>
+                <span class="btn-loading" hidden>Sending…</span>
+              </button>
+              <p class="form-note">Your message is sent securely to our CCO. We typically reply within 1–2 business days.</p>
             </div>
-            <div class="form-group">
-              <label for="message">Message *</label>
-              <textarea id="message" name="message" required placeholder="Tell us about your requirements — product type, quantity, timeline..."></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
-            <p style="font-size: 0.8rem; color: var(--stone-muted); margin-top: 0.75rem;">Submitting opens your email client addressed to our CCO.</p>
           </form>
         </div>
       </div>
@@ -136,6 +154,13 @@
     </div>
   </footer>
 
+  <script>
+    window.formspree = window.formspree || function () {
+      (formspree.q = formspree.q || []).push(arguments);
+    };
+  </script>
+  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+  <script src="js/config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

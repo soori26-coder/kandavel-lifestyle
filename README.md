@@ -85,6 +85,24 @@ Place Margit Vintages product photos in `assets/images/`:
 
 The products page shows styled placeholders until images are added.
 
+## Contact Form (Formspree)
+
+The contact form uses [@formspree/ajax](https://github.com/formspree/formspree-js/tree/master/packages/formspree-ajax) (CDN) to send inquiries to **suresh.d@kandavel.lifestyle**.
+
+### One-time setup
+
+1. Sign up at [formspree.io](https://formspree.io) and create a form
+2. Set the notification email to `suresh.d@kandavel.lifestyle`
+3. Copy your form ID (e.g. `mnjkqjya` from `https://formspree.io/f/mnjkqjya`)
+4. Set it in `js/config.js`:
+
+```javascript
+formspreeFormId: 'mnjkqjya',
+```
+
+5. In Formspree → **Settings** → **Restrict to Domain**: `kandavel.lifestyle` (not `www.`)
+6. Commit and push
+
 ## Local Preview
 
 Open `index.html` in a browser, or run:
