@@ -17,54 +17,89 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const form = document.querySelector('#contact-form');
-  if (!form || typeof window.formspree !== 'function') return;
+  if (!form) return;
 
   const fields = form.querySelector('.contact-form-fields');
   const submitBtn = form.querySelector('.contact-form-submit');
   const btnLabel = submitBtn?.querySelector('.btn-label');
   const btnLoading = submitBtn?.querySelector('.btn-loading');
+  const successStatus = form.querySelector('.form-status--success');
+  const errorStatus = form.querySelector('.form-status--error');
   const errorMessage = form.querySelector('.form-status-message');
-  const formId = window.KANDAVEL_CONFIG?.formspreeFormId;
+  const endpoint = form.getAttribute('action') || window.KANDAVEL_CONFIG?.formspreeEndpoint;
 
-  if (!formId) return;
-
-  const inquirySubject = () => {
-    const name = form.querySelector('[name="name"]')?.value.trim() || '';
-    const company = form.querySelector('[name="company"]')?.value.trim() || '';
-    return `Inquiry from ${name}${company ? ` — ${company}` : ''}`;
+  const setLoading = (loading) => {
+    if (!submitBtn) return;
+    submitBtn.disabled = loading;
+    if (btnLabel) btnLabel.hidden = loading;
+    if (btnLoading) btnLoading.hidden = !loading;
   };
 
-  window.formspree('initForm', {
-    formElement: '#contact-form',
-    formId,
+  const showStatus = (type, message) => {
+    if (successStatus) successStatus.hidden = type !== 'success';
+    if (errorStatus) errorStatus.hidden = type !== 'error';
+    if (fields) fields.hidden = type === 'success';
+    if (type === 'error' && errorMessage && message) {
+      errorMessage.textContent = message;
+    }
+  };
 
-    data: {
-      _subject: inquirySubject,
-      _replyto: () => form.querySelector('[name="email"]')?.value.trim() || '',
-    },
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    disable: () => {
-      if (!submitBtn) return;
-      submitBtn.disabled = true;
-      if (btnLabel) btnLabel.hidden = true;
-      if (btnLoading) btnLoading.hidden = false;
-    },
+    if (!endpoint || endpoint.includes('YOUR_FORM_ID')) {
+      showStatus('error', 'The contact form is not configured yet. Please email us at suresh.d@kandavel.lifestyle.');
+      return;
+    }
 
-    enable: () => {
-      if (!submitBtn) return;
-      submitBtn.disabled = false;
-      if (btnLabel) btnLabel.hidden = false;
-      if (btnLoading) btnLoading.hidden = true;
-    },
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
 
-    onSuccess: () => {
-      if (fields) fields.hidden = true;
-    },
+    const data = new FormData(form);
+    if (data.get('_gotcha')) return;
 
-    renderFormError: (_context, message) => {
-      if (errorMessage) {
-        errorMessage.textContent = message || 'Please try again or email us directly at suresh.d@kandavel.lifestyle.';
+    const name = String(data.get('name') || '').trim();
+    const email = String(data.get('email') || '').trim();
+    const company = String(data.get('company') || '').trim();
+    const message = String(data.get('message') || '').trim();
+    const subject = `Inquiry from ${name}${company ? ` — ${company}` : ''}`;
+
+    setLoading(true);
+    if (successStatus) successStatus.hidden = true;
+    if (errorStatus) errorStatus.hidden = true;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          company,
+          message,
+          _subject: subject,
+          _replyto: email,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        form.reset();
+        showStatus('success');
+      } else {
+        const detail = result.errors?.map((err) => err.message).filter(Boolean).join(' ');
+        showStatus('error', detail || 'Please try again or email us directly at suresh.d@kandavel.lifestyle.');
       }
-    },
+    } catch {
+      showStatus('error', 'Network error. Please check your connection or email us at suresh.d@kandavel.lifestyle.');
+    } finally {
+      setLoading(false);
+    }
   });
 });
